@@ -1,0 +1,77 @@
+<nz-modal [nzVisible]="modalOptions.visible"
+          [nzTitle]="modalOptions.title"
+          (nzOnCancel)="modalOptions.visible = false"
+          (nzOnOk)="handleOk()" >
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Username</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-input-group >
+        <input type="text" nz-input [(ngModel)]="modalOptions.user.username" placeholder="请输入用户名" [disabled]="modalOptions.modalType === 'update'" />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Password</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-input-group>
+        <input type="text" nz-input [(ngModel)]="modalOptions.user.password" placeholder="请输入密码"  />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+</nz-modal>
+
+<ul class="ma-menus-table-buttons" >
+  <li><button nz-button [nzType]="'primary'" (click)="showCreateModal()">添加用户</button></li>
+</ul>
+
+<div class="ma-table-table-container">
+  <nz-table [nzData]="users">
+    <thead>
+    <tr>
+      <th nzShowExpand></th>
+      <th>Username</th>
+      <th>Enabled</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container  *ngFor="let user of users;">
+      <tr>
+        <td nzShowExpand [(nzExpand)]="user.expand" (nzExpandChange)="loadUserByUsername(user)"></td>
+        <td>{{user.username}}</td>
+        <td><nz-switch [(ngModel)]="user.enabled" (ngModelChange)="changeUserState(user)"></nz-switch></td>
+        <td>
+          <button nz-button nzType="primary" (click)="showUpdateModal(user)">修改密码</button>
+          &nbsp;
+          <button nz-button nzType="danger" (click)="deleteUser(user.username)">删除</button>
+        </td>
+      </tr>
+      <tr [nzExpand]="user.expand">
+        <td></td>
+        <td colspan="3" class="content-left-align">
+          <div>
+            <h2>Authorities: </h2>
+            <ng-container *ngIf="user.loaded">
+              <ma-authority-tree [checkedAuthorities]="user.authorities"
+                                 (authorityCheckedChange)="addOrRemoveUserAuthority(user, $event)"></ma-authority-tree>
+            </ng-container>
+
+            <!--<h2>Members: </h2>-->
+            <!--<nz-tag *ngFor="let item of user.members" nzMode="closeable">{{item}}</nz-tag>-->
+
+            <!--<ng-template #groupsTemplate>-->
+              <!--<nz-tag *ngFor="let group of groups" nzMode="checkable" [nzChecked]="hasMember(group, group)" (nzCheckedChange)="addOrRemoveMember(group, group, $event)">-->
+                <!--{{group.groupName}}</nz-tag>-->
+            <!--</ng-template>-->
+            <!---->
+            <!--<nz-tag nz-popover nzTitle="角色列表" [nzContent]="groupsTemplate" nzTrigger="click">-->
+              <!--<i nz-icon type="plus" ></i>添加角色-->
+            <!--</nz-tag>-->
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+    </tbody>
+  </nz-table>
+</div>

@@ -1,0 +1,21 @@
+<div class="ma-workspace-header-content-logo">
+  <a [routerLink]="basePath" >
+    <img alt="logo" [src]="app?.logo || './assets/logo-full.svg'">
+  </a>
+</div>
+
+<div class="ma-workspace-header-content-toolbar-container">
+  <ul class="toolbar-group">
+    <li><i nz-icon [type]="collapsedState ? 'menu-unfold' : 'menu-fold'" (click)="emitCollapsedState()"></i></li>
+  </ul>
+
+  <ma-search-bar class="search-bar" *ngIf="showTopSearchBar"></ma-search-bar>
+
+  <div class="toolbar-group">
+    <ng-container [ngTemplateOutlet]="toolbars" *ngIf="toolbars"></ng-container>
+  </div>
+
+  <nz-select class="language-switcher" [(ngModel)]="language" (ngModelChange)="switchLanguage($event)" *ngIf="showLanguageSwitcher">
+    <nz-option *ngFor="let item of languages | keyvalue" [nzValue]="item.key" [nzLabel]="item.value"></nz-option>
+  </nz-select>
+</div>

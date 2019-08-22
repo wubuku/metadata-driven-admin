@@ -1,0 +1,73 @@
+<nz-card [nzActions]="[cardActions]" nzTitle="系统设置">
+  <h2 class="ma-setting-basic-title">基本设置</h2>
+  <nz-divider></nz-divider>
+  <form nz-form [formGroup]="formGroup" class="ma-setting-basic-body" *ngIf="formGroup">
+    <div class="ma-setting-form-item">
+      <nz-form-label>系统图标</nz-form-label>
+      <nz-form-control style="margin-right: -8px; margin-bottom: -8px">
+        <nz-upload nzAction="/api/aliyun-oss" nzListType="picture-card" [nzShowUploadList]="false"
+                   (nzChange)="onLogoChange($event)">
+          <ng-container *ngIf="!formGroup.value.logo">
+            <i nz-icon type="plus"></i>
+            <div>Upload</div>
+          </ng-container>
+          <img *ngIf="formGroup.value.logo" [src]="formGroup.value.logo" class="ma-setting-logo">
+        </nz-upload>
+      </nz-form-control>
+    </div>
+    <div class="ma-setting-form-item">
+      <nz-form-label>系统名字</nz-form-label>
+      <nz-form-control>
+        <input nz-input formControlName="appName" class="ma-setting-app-name"/>
+      </nz-form-control>
+    </div>
+    <div formGroupName="extra">
+      <div class="ma-setting-form-item">
+        <nz-form-label>公司名字</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="company" [nzAutosize]="{ minRows: 1, maxRows: 4 }"></textarea>
+        </nz-form-control>
+      </div>
+      <div class="ma-setting-form-item">
+        <nz-form-label>官网地址</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="website" [nzAutosize]="{ minRows: 1, maxRows: 4 }"></textarea>
+        </nz-form-control>
+      </div>
+    </div>
+  </form>
+  <h2 class="ma-setting-theme-title">主题设置</h2>
+  <nz-tabset nzTabBarGutter="12" *ngIf="variableGroups != null">
+    <nz-tab *ngFor="let group of variableGroups" [nzTitle]="group.title">
+      <fieldset class="ma-setting-tab-content">
+        <div class="ma-setting-form-item" *ngFor="let variable of group.variables">
+          <nz-form-label>{{variable.label}}</nz-form-label>
+          <nz-form-control>
+            <ng-container *ngIf="variable.type === 'px'">
+              <nz-input-number [(ngModel)]="variables[variable.name]" [nzStep]="variable.step || 1" [nzFormatter]="createFormatter('px')" [nzParser]="createParser('px')"></nz-input-number>
+            </ng-container>
+            <ng-container *ngIf="variable.type === '%'">
+              <nz-input-number [(ngModel)]="variables[variable.name]" [nzStep]="variable.step || 1" [nzFormatter]="createFormatter('%')" [nzParser]="createParser('%')"></nz-input-number>
+            </ng-container>
+            <ng-container *ngIf="variable.type === 'number'">
+              <nz-input-number [(ngModel)]="variables[variable.name]" [nzStep]="variable.step || 1"></nz-input-number>
+            </ng-container>
+            <ng-container *ngIf="variable.type === 'color'">
+              <input nz-input type="color" [(ngModel)]="variables[variable.name]"/>
+            </ng-container>
+            <ng-container *ngIf="variable.type === 'select'">
+              <nz-select [(ngModel)]="variables[variable.name]">
+                <nz-option *ngFor="let item of variable.options" [nzLabel]="item" [nzValue]="item"></nz-option>
+              </nz-select>
+            </ng-container>
+          </nz-form-control>
+        </div>
+      </fieldset>
+    </nz-tab>
+  </nz-tabset>
+</nz-card>
+<ng-template #cardActions>
+  <div>
+    <button nz-button nzType="primary" [disabled]="!formGroup.valid" (click)="save()">保存</button>
+  </div>
+</ng-template>

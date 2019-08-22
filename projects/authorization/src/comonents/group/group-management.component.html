@@ -1,0 +1,70 @@
+<nz-modal [nzVisible]="modalOptions.visible"
+          [nzTitle]="modalOptions.title"
+          (nzOnCancel)="modalOptions.visible = false"
+          (nzOnOk)="handleOk()" >
+
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>Group Name</nz-form-label>
+    <nz-form-control [nzSpan]="12">
+      <nz-input-group >
+        <input nz-input [(ngModel)]="modalOptions.groupName" placeholder="请输入权限组名字" />
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+</nz-modal>
+
+<ul class="ma-menus-table-buttons" >
+  <li><button nz-button [nzType]="'primary'" (click)="showCreateModal()">添加权限组</button></li>
+</ul>
+<div class="ma-table-table-container">
+  <nz-table [nzData]="groups">
+  <thead>
+  <tr>
+    <th nzShowExpand></th>
+    <th>Group Name</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+    <ng-container  *ngFor="let group of groups;">
+      <tr>
+        <td nzShowExpand [(nzExpand)]="group.expand" (nzExpandChange)="loadGroupByGroupName(group)"></td>
+        <td>
+          {{group.groupName}}
+        </td>
+        <td>
+          <button nz-button nzType="primary" (click)="showUpdateModal(group)">修改</button>
+          &nbsp;
+          <button nz-button nzType="danger" (click)="deleteGroup(group.groupName)">删除</button>
+        </td>
+      </tr>
+      <tr [nzExpand]="group.expand">
+        <td></td>
+        <td colspan="2" class="content-left-align">
+          <h2>Authorities: </h2>
+          <ng-container *ngIf="group.loaded">
+            <ma-authority-tree [checkedAuthorities]="group.authorities"
+                               (authorityCheckedChange)="addOrRemoveGroupAuthority(group, $event)"></ma-authority-tree>
+          </ng-container>
+        </td>
+      </tr>
+      <tr [nzExpand]="group.expand">
+        <td></td>
+        <td colspan="2" class="content-left-align">
+          <h2>Members: </h2>
+          <nz-tag *ngFor="let item of group.members">{{item}}</nz-tag>
+
+          <nz-tag nz-popover nzTitle="用户列表" [nzContent]="usersTemplate" nzTrigger="click">
+            <i nz-icon type="plus" ></i>添加用户
+          </nz-tag>
+
+          <ng-template #usersTemplate>
+            <nz-tag *ngFor="let user of users" nzMode="checkable" [nzChecked]="hasMember(group, user)" (nzCheckedChange)="addOrRemoveMember(group, user, $event)">
+              {{user.username}}</nz-tag>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</nz-table>
+</div>

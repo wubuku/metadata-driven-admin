@@ -1,0 +1,77 @@
+<nz-card>
+  <nz-card-tab>
+    <nz-tabset nzSize="large" [(nzSelectedIndex)]="tabIndex">
+      <nz-tab nzTitle="动态视图">
+
+      </nz-tab>
+      <nz-tab nzTitle="静态视图"></nz-tab>
+    </nz-tabset>
+  </nz-card-tab>
+
+  <div [class.hide]="tabIndex !== 0">
+    <div nz-form class="ma-views-dynamic-query-form">
+      <div nz-row>
+        <div nz-col nzSpan="12">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input [(ngModel)]="searchText"/>
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nzSearch nz-button nzType="primary" (click)="filter()">搜索<i nz-icon type="search"></i></button>
+          </ng-template>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <div class="ma-views-dynamic-buttons">
+            <button nz-button nzType="primary" [nzLoading]="inBuilding" (click)="buildViewsFromRaml()">自动构建视图</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ma-table-table-container">
+      <nz-table *ngIf="displayViews" [nzData]="displayViews" [nzFrontPagination]="false"
+                [(nzPageSize)]="size" [(nzPageIndex)]="page" [nzTotal]="total" (nzPageIndexChange)="filter()" [nzScroll]="{x: '100%'}">
+        <thead>
+        <tr>
+          <th style="min-width:100px">语言</th>
+          <th>名字</th>
+          <th>路径</th>
+          <th nzRight="0">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let view of displayViews">
+          <td>{{languages[view.language]}}</td>
+          <td style="word-break: keep-all;">{{view.name}}</td>
+          <td style="word-break: keep-all;">{{view.path}}</td>
+          <td nzRight="0" class="ma-table-row-buttons">
+            <button nz-button (click)="emit(view)" *ngIf="modalRef">选择</button>
+            <ng-container *ngIf="!modalRef">
+              <button nz-button [routerLink]="'../../' + view.path" nzType="default" *ngIf="isAccessible(view.path)">查看</button>
+              <button nz-button (click)="gotoAndDesign(view.path)" nzType="primary">编辑</button>
+              <button nz-button (click)="remove(view.path)" nzType="danger">删除</button>
+            </ng-container>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+
+  <nz-list [class.hide]="tabIndex !== 1" [nzDataSource]="noneWildRoutes" nzHeader="静态视图列表" [nzBordered]="true" [nzSplit]="true" [nzRenderItem]="item">
+    <ng-template #item let-item>
+      <ng-container>
+        <nz-list-item [nzContent]="content" [nzActions]="[actions]">
+          <ng-template #content>
+            <pre>{{item.path}}</pre>
+          </ng-template>
+          <ng-template #actions>
+            <button nz-button (click)="emit(item)" *ngIf="modalRef">选择</button>
+            <ng-container *ngIf="!modalRef">
+              <a nz-button nzType="primary" routerLink="{{item.path}}">查看视图</a>
+            </ng-container>
+          </ng-template>
+        </nz-list-item>
+      </ng-container>
+    </ng-template>
+  </nz-list>
+</nz-card>

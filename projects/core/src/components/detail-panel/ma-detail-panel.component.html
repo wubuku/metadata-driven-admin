@@ -1,0 +1,18 @@
+<ng-template #title>
+  <ma-editable-text [viewMode]="viewMode" [(ngModel)]="component.title"></ma-editable-text>
+</ng-template>
+<nz-card [nzTitle]="title" [nzBodyStyle]="{padding: 0, marginTop: '1px'}">
+  <ma-data-loader class="ma-detail-panel-data-loader"
+                  (dataLoaded)="dataLoaded($event)"
+                  [dataLoader]="component.dataLoader"
+                  [dataLoaderButtons]="dataLoaderButtons"
+                  [uriParameters]="uriParameters"
+                  [viewMode]="viewMode"></ma-data-loader>
+
+  <ma-form-panel [formPanel]="component.formPanel" [formValue]="formValue" [viewMode]="viewMode"
+                 (setting)="openDetailPanelSetting()" *ngIf="component.formPanel"></ma-form-panel>
+  <ng-container *ngIf="!component.formPanel">
+    <pre style="font-size: 20px">查询结果： {{formValue | json}}</pre>
+  </ng-container>
+</nz-card>
+<ma-tabset *ngIf="component.tabset" class="ma-detail-panel-tabset" [viewMode]="viewMode" [component]="component.tabset" [route]="route" [path]="path"></ma-tabset>

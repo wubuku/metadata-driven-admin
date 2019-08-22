@@ -1,0 +1,54 @@
+<ma-data-loader (dataLoaded)="receiveQueryResponse($event)"
+                [dataLoadCallback]="queryCallback"
+                [dataLoader]="component.dataLoader"
+                [dataLoaderButtons]="dataLoaderButtons"
+                [viewMode]="viewMode"
+                [uriParameters]="uriParameters" ></ma-data-loader>
+
+<div class="ma-list-buttons">
+  <ng-container *ngFor="let button of component.buttons">
+    <button nz-button [nzType]="button.classType" (click)="processClick(button)" [attr.title]="button.description">{{button.text}}</button>
+  </ng-container>
+  <ng-template [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-template>
+</div>
+
+<div class="ma-list-list-container" *ngIf="page">
+  <nz-list
+           [nzDataSource]="page.content"
+           [nzHeader]="header || component.title"
+           [nzRenderItem]="item"
+           [nzFooter]="footer" [nzBordered]="component.bordered" [nzSplit]="component.split" [nzPagination]="pagination">
+    <ng-template #item let-item>
+      <nz-list-item [nzContent]="defaultContent" [nzActions]="[actions]">
+        <ng-template #defaultContent>
+          <ng-container *ngIf="contentRef">
+            <ng-template [ngTemplateOutlet]="contentRef" [ngTemplateOutletContext]="{$implicit: item}"></ng-template>
+          </ng-container>
+          <ng-container *ngIf="!contentRef">
+            <ma-dynamic *ngIf="component.viewPath != null" [path]="component.viewPath"></ma-dynamic>
+            <pre        *ngIf="component.viewPath == null" >{{item | json}}</pre>
+          </ng-container>
+        </ng-template>
+        <ng-template #actions>
+          <button nz-button nzType="primary" (click)="emit(item)" *ngIf="modalRef">选择</button>
+          <ng-container *ngIf="!modalRef">
+            <ng-container *ngFor="let button of component.rowButtons">
+              <button nz-button [nzType]="button.classType" (click)="processClick(button, item)">{{button.text}}</button>
+            </ng-container>
+            <ng-container *ngIf="rowButtons">
+              <ng-template [ngTemplateOutlet]="rowButtons" [ngTemplateOutletContext]="{$implicit: item}"></ng-template>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </nz-list-item>
+    </ng-template>
+
+    <ng-template #pagination>
+      <ng-container *ngIf="component.showPagination">
+        <nz-pagination [(nzPageIndex)]="page.number" [(nzPageSize)]="page.size" [nzTotal]="page.totalElements"
+                       [nzShowSizeChanger]="true" (nzPageSizeChange)="query()"
+                       (nzPageIndexChange)="query()"></nz-pagination>
+      </ng-container>
+    </ng-template>
+  </nz-list>
+</div>

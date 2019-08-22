@@ -1,0 +1,5 @@
+<ma-data-loader (dataLoaded)="dataLoaded($event)" [dataLoader]="component.dataLoader" [dataLoaderButtons]="dataLoaderButtons" [uriParameters]="uriParameters" *ngIf="component.dataLoader"></ma-data-loader>
+
+<ma-form-panel (submit)="submit($event)" (setting)="openFormSetting()"
+               [formPanel]="component.formPanel" [buttons]="buttons" [buttonsPlacement]="'footer'"
+               [formValue]="formValue" [showTitle]="true" [viewMode]="viewMode"></ma-form-panel>

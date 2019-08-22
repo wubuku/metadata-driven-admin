@@ -1,0 +1,104 @@
+<!--view-->
+<ul nz-menu [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed" >
+  <li nz-submenu *ngFor="let menu of menus" [nzOpen]="isOpen(menu)">
+    <a *ngIf="menu.reachable" [routerLink]="basePath + menu.path" title="{{menu.displayName}}">
+      <i nz-icon [type]="menu.icon?.type" [iconfont]="menu.icon?.iconfont" [theme]="menu.icon?.theme" *ngIf="menu.icon"></i>
+      <!--<ma-icon [icon]="menu.icon"></ma-icon>-->
+      <span class="nav-text">{{menu.displayName}}</span>
+    </a>
+    <span *ngIf="!menu.reachable" title>
+      <i nz-icon [type]="menu.icon?.type" [iconfont]="menu.icon?.iconfont" [theme]="menu.icon?.theme" *ngIf="menu.icon"></i>
+      <!--<ma-icon [icon]="menu.icon"></ma-icon>-->
+      <span class="nav-text">{{menu.displayName}}</span>
+    </span>
+    <ul>
+      <ng-container *ngFor="let submenu of menu.children">
+        <ng-container *ngIf="!submenu.children">
+          <li nz-menu-item [nzSelected]="isActive(submenu.path)">
+            <a [routerLink]="basePath + submenu.path" title="{{submenu.displayName}}">
+              <i nz-icon [type]="submenu.icon?.type" [iconfont]="submenu.icon?.iconfont" [theme]="submenu.icon?.theme" *ngIf="submenu.icon"></i>
+              <!--<ma-icon [icon]="submenu.icon"></ma-icon>-->
+              <span class="nav-text">{{submenu.displayName}}</span>
+            </a>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="submenu.children">
+          <li nz-submenu [nzOpen]="isOpen(submenu)">
+            <a *ngIf="submenu.reachable" [routerLink]="basePath + submenu.path" title="{{submenu.displayName}}">
+              <i nz-icon [type]="submenu.icon?.type" [iconfont]="submenu.icon?.iconfont" [theme]="submenu.icon?.theme" *ngIf="submenu.icon"></i>
+              <!--<ma-icon [icon]="submenu.icon" *ngIf="submenu.icon"></ma-icon>-->
+              <span class="nav-text">{{submenu.displayName}}</span>
+            </a>
+            <span *ngIf="!submenu.reachable" title>
+              <i nz-icon [type]="submenu.icon?.type" [iconfont]="submenu.icon?.iconfont" [theme]="submenu.icon?.theme" *ngIf="submenu.icon"></i>
+              <!--<ma-icon [icon]="submenu.icon" *ngIf="submenu.icon"></ma-icon>-->
+              <span class="nav-text">{{submenu.displayName}}</span>
+            </span>
+            <ul>
+              <li nz-menu-item *ngFor="let leaf of submenu.children" [nzSelected]="isActive(leaf.path)">
+                <a [routerLink]="basePath + leaf.path" title="{{leaf.displayName}}">
+                  <i nz-icon [type]="leaf.icon?.type" [iconfont]="leaf.icon?.iconfont" [theme]="leaf.icon?.theme" *ngIf="leaf.icon"></i>
+                  <!--<ma-icon [icon]="leaf.icon" *ngIf="leaf.icon"></ma-icon>-->
+                  <span class="nav-text">{{leaf.displayName}}</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ng-container>
+      </ng-container>
+    </ul>
+  </li>
+
+</ul>
+
+<!--design-->
+<!--<div class="component-groups" *ngIf="viewMode == 1">-->
+  <!--<div class="component-group" *ngFor="let componentGroup of componentGroups" >-->
+    <!--<h4 class="component-group-title">{{componentGroup.name || componentGroup.type}}</h4>-->
+    <!--<div class="components">-->
+      <!--<div nz-row [nzGutter]="6">-->
+        <!--<div nz-col cdkDrag [nzSpan]="12" (cdkDragDropped)="dropped($event, def)" *ngFor="let def of componentGroup.componentDefinitions">-->
+          <!--{{def.name}}-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+<!--<div class="component-groups" *ngIf="viewMode == 1">-->
+  <!--<div class="component-group" *ngFor="let componentGroup of componentGroups" >-->
+    <!--<h4 class="component-group-title">{{componentGroup.name || componentGroup.type}}</h4>-->
+    <!--<div class="components">-->
+      <!--<div nz-row [nzGutter]="6">-->
+        <!--<div nz-col cdkDropList [nzSpan]="12" *ngFor="let def of componentGroup.componentDefinitions">-->
+          <!--<div cdkDrag style="margin: 3px auto"-->
+               <!--(cdkDragDropped)="dropped($event, def)">{{def.name}}</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+
+<!--<div class="component-groups" *ngIf="viewMode == 1">-->
+  <!--<div class="component-group" *ngFor="let componentGroup of componentGroups" >-->
+    <!--<h4 class="component-group-title">{{componentGroup.name || componentGroup.type}}</h4>-->
+    <!--<div class="components">-->
+      <!--<div nz-row cdkDropList (cdkDropListDropped)="dropListDropped($event)" [nzGutter]="6">-->
+        <!--<div nz-col cdkDrag  [nzSpan]="12" (cdkDragDropped)="dropped($event, def)" *ngFor="let def of componentGroup.componentDefinitions">-->
+          <!--{{def.name}}-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->
+
+
+<!--<div class="component-groups" *ngIf="viewMode == 1">-->
+  <!--<div cdkDropList  class="example-list" *ngFor="let componentGroup of componentGroups" >-->
+    <!--<h4 class="component-group-title">{{componentGroup.name || componentGroup.type}}</h4>-->
+    <!--<div nz-row>-->
+      <!--<div nz-col nzSpan="12" class="example-box" *ngFor="let def of componentGroup.componentDefinitions" cdkDrag>{{def.name}}</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</div>-->

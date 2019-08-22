@@ -1,0 +1,96 @@
+<div [class.ma-table-designable]="viewMode === 1">
+  <ma-data-loader (dataLoaded)="receiveQueryResponse($event)"
+                  [dataLoadCallback]="queryCallback"
+                  [dataLoader]="component.dataLoader"
+                  [dataLoaderButtons]="dataLoaderButtons"
+                  [viewMode]="viewMode"
+                  [uriParameters]="uriParameters"></ma-data-loader>
+
+  <div class="ma-table-buttons">
+    <ma-button [button]="button" [viewMode]="viewMode"
+               (innerClick)="processClick(button)"
+               (delete)="deleteButton($event)" *ngFor="let button of component.buttons"></ma-button>
+    <ng-container [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-container>
+    <button nz-button class="adder" [nzType]="'dashed'" type="button" (click)="addButton(component.buttons)" title="添加按钮"><i nz-icon type="plus" ></i></button>
+  </div>
+
+
+
+  <div class="ma-table-table-container" [class.ma-table-table-container-dragging]="dragging">
+
+    <ng-template #tpl2>
+      <ma-tree-list [rootNodes]="component.columns"
+                    [childrenKey]="'columns'"
+                    [filter]="isInvisible"
+                    [renderItem]="tpl3">
+        <ng-template let-column #tpl3>
+          <div class="flex-space-between">
+            <span>{{column.label}}</span>
+            <i nz-icon type="minus-circle" style="cursor: pointer; font-size: 16px" (click)="toggleVisibility(column)" *ngIf="column.hide"></i>
+          </div>
+        </ng-template>
+      </ma-tree-list>
+    </ng-template>
+    <button nz-button nzType="dashed" title="查看隐藏的列"
+            nz-popover nzTrigger="click" nzTitle="恢复隐藏的列" nzPlacement="right" [nzContent]="tpl2" [nzOverlayStyle]="{maxHeight: '500px', overflowY: 'auto'}"
+            type="button" class="show-hidden-columns-btn"><i nz-icon type="bars"></i>
+    </button>
+
+    <nz-table
+              [(nzPageIndex)]="page.number"
+              [(nzPageSize)]="page.size"
+              [nzData]="page.content"
+              [nzTotal]="page.totalElements"
+              [nzFrontPagination]="false"
+              [nzShowPagination]="component.showPagination"
+              [nzShowSizeChanger]="true"
+              [nzBordered]="component.bordered"
+              [nzTitle]="header"
+              [nzFooter]="footer"
+              [nzScroll]="scroll"
+              (nzPageIndexChange)="query()"
+              (nzPageSizeChange)="query()">
+      <thead nzSingleSort>
+      <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, row)" *ngFor="let row of headerRows; trackBy: trackByIndex" >
+        <th cdkDrag (cdkDragStarted)="toggleDragging()" (cdkDragDropped)="toggleDragging()"
+            [nzShowSort]="header.sortable" (nzSortChange)="sort(header.field, $event)"
+            [attr.rowspan]="header.rowspan" [attr.colspan]="header.colspan"
+            [nzRight]="header.right" [nzLeft]="header.left" *ngFor="let header of row; trackBy: trackByIndex" >
+          <span class="ma-table-th-label">{{header.label}}</span>
+          <ng-container *ngIf="header.designable">
+            <input class="ma-table-th-input" [(ngModel)]="header.label" />
+            <ul class="ma-table-th-settings">
+                <li><i nz-icon type="sort-ascending" (click)="toggleSortable($event, header)"></i></li>
+                <li><i nz-icon type="delete" (click)="toggleVisibility(header.column)"></i></li>
+                <li><i nz-icon type="drag" class="drag-move" cdkDragHandle></i></li>
+            </ul>
+           </ng-container>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of page.content; trackBy: trackByIndex">
+        <ng-container *ngFor="let column of dataRow; trackBy: trackByIndex">
+          <td>{{renderColumnHeader(column, data)}}</td>
+        </ng-container>
+        <td nzRight="0px" *ngIf="showRowButtons">
+          <div class="ma-table-buttons-row">
+            <button nz-button nzType="primary" (click)="emit(data)" *ngIf="modalRef">选择</button>
+            <ng-container *ngIf="!modalRef">
+              <ma-button [button]="button" [viewMode]="viewMode"
+                         (innerClick)="processClick(button, data)"
+                         (delete)="deleteButton($event)" *ngFor="let button of component.rowButtons"></ma-button>
+
+              <ng-container *ngIf="rowButtons">
+                <ng-container [ngTemplateOutlet]="rowButtons" [ngTemplateOutletContext]="{ $implicit: data}"></ng-container>
+              </ng-container>
+
+              <button nz-button class="adder" [nzType]="'dashed'" type="button" (click)="addButton(component.rowButtons)" title="添加按钮"><i nz-icon type="plus" ></i></button>
+            </ng-container>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

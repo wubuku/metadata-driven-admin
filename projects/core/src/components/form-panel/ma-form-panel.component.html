@@ -1,0 +1,126 @@
+<div class="ma-form-panel" [class.ma-form-panel-designable]="viewMode === 1">
+  <form nz-form class="ma-form-panel-form-container" *ngIf="formType === 'form'">
+    <div class="ant-modal-header" *ngIf="showTitle">
+      <div class="ant-modal-title">
+        <ma-editable-text [(ngModel)]="formPanel.title" [ngModelOptions]="{standalone: true}" [viewMode]="viewMode"></ma-editable-text>
+      </div>
+    </div>
+    <div class="ant-modal-body">
+      <ng-template #fieldList>
+        <ma-tree-list [rootNodes]="formPanel.body.children" [filter]="isInvisible" [renderItem]="item">
+          <ng-template let-cell #item>
+            <div class="flex-space-between">
+              <span>{{cell.content.label}}</span>
+              <i nz-icon type="minus-circle" style="cursor: pointer; font-size: 16px" (click)="toggleVisibility(cell)"></i>
+            </div>
+          </ng-template>
+        </ma-tree-list>
+      </ng-template>
+
+      <ul class="ma-form-panel-settings">
+        <li><i nz-icon type="setting" (click)="settingForm()"></i></li>
+        <li><i nz-icon type="bars" nz-popover  nzTrigger="click" nzTitle="恢复隐藏的字段" [nzContent]="fieldList" [nzOverlayStyle]="{maxHeight: '500px', overflowY: 'auto'}"></i></li>
+      </ul>
+
+
+      <div nz-row cdkDropListGroup
+           class="drop-list-group"
+           [class.drop-list-group-dragging]="dragging"
+           [nzGutter]="formPanel.body.horizontal * 2" nzType="flex" nzJustify="start" nzAlign="top" #dropListGroup>
+        <div nz-col cdkDropList [cdkDropListEnterPredicate]="dropListEnteredPredicate" (cdkDropListDropped)="dropListDropped()" #placeholder></div>
+        <div nz-col cdkDropList [cdkDropListEnterPredicate]="dropListEnteredPredicate" (cdkDropListDropped)="dropListDropped()"
+             [nzSpan]="i > markCollapseIndex ? 0 : cell.width"
+             [style.marginTop.px]="formPanel.body.vertical"
+             [style.marginBottom.px]="formPanel.body.vertical"
+             *ngFor="let cell of formPanel.body.children; trackBy: trackByIndex; let i = index;">
+          <div cdkDrag (cdkDragStarted)="toggleDragging()" (cdkDragDropped)="toggleDragging()" (cdkDragMoved)="dragMoved($event);"
+               ma-resize [viewMode]="viewMode" (resize)="resizeCellWidth($event, cell)">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="cell.content.labelWidth" [nzRequired]="cell.content.required" ma-resize [viewMode]="viewMode" (resize)="resizeFormItemLabelWidth($event, cell.content)">
+                <ma-editable-text [(ngModel)]="cell.content.label" [ngModelOptions]="{standalone: true}" [viewMode]="viewMode"></ma-editable-text>
+              </nz-form-label>
+              <nz-form-control [nzSpan]="cell.content.fieldWidth" ma-resize [viewMode]="viewMode" (resize)="resizeFormItemControlWidth($event, cell.content)">
+                <ma-form-control [item]="cell.content"></ma-form-control>
+              </nz-form-control>
+            </nz-form-item>
+
+            <ul #formItemSettings class="ma-form-panel-form-item-settings" [class.ma-form-panel-form-item-settings-visible]="formItemSettings === visibleFormItemSettings" >
+              <li>
+                <i nz-icon type="appstore" nz-popover (nzVisibleChange)="toggleFormItemSettingsVisibility($event, formItemSettings)"
+                   [nzOverlayStyle]="{width: '380px'}" nzTrigger="click" nzPlacement="bottomLeft" nzTitle="请选择表单控件类型" [nzContent]="controlRadioGroup"></i>
+                <ng-template #controlRadioGroup>
+                  <nz-radio-group [ngModelOptions]="{standalone: true}" [ngModel]="cell.content.type" (ngModelChange)="changeFormItemType($event, cell)" >
+                    <label nz-radio style="min-width: 100px;" [nzValue]="def.type" *ngFor="let def of formItemDefinitions" >{{def.name}}</label>
+                  </nz-radio-group>
+                </ng-template>
+              </li>
+              <li><i nz-icon type="setting" (click)="settingFormControl(i)"></i></li>
+              <li class="list-item-op" *ngIf="buttonsPlacement === 'line-end'">
+                <i nz-icon type="swap" nz-popover (nzVisibleChange)="toggleFormItemSettingsVisibility($event, formItemSettings)"
+                   [nzOverlayStyle]="{width: '320px'}" nzTrigger="click" nzPlacement="bottomLeft" nzTitle="请选择操作符" [nzContent]="opRadioGroup"></i>
+                <ng-template #opRadioGroup>
+                  <nz-radio-group [(ngModel)]="cell.content.op" [ngModelOptions]="{standalone: true}">
+                    <label nz-radio style="min-width: 80px;" [nzValue]="text" *ngFor="let text of operators" >{{text}}</label>
+                  </nz-radio-group>
+                </ng-template>
+                <i class="hint">{{cell.content.op}}</i>
+              </li>
+              <li><i nz-icon type="delete" (click)="toggleVisibility(cell)"></i></li>
+              <li><i nz-icon type="drag" class="drag-move" cdkDragHandle></i></li>
+            </ul>
+          </div>
+        </div>
+        <!--行末按钮 -->
+        <div nz-col class="ma-form-panel-buttons-collapsible" [nzSpan]="formPanel.buttonsWidth" [nzOffset]="offsetWidth"
+             [style.marginTop.px]="formPanel.body.vertical" [style.marginBottom.px]="formPanel.body.vertical" *ngIf="buttonsPlacement === 'line-end'">
+          <a class="motion-collapse" (click)="toggleCollapse()" *ngIf="formPanel.collapsible">
+            <i nz-icon [type]="markCollapseIndex !== formPanel.body.children.length ? 'down' : 'up'"></i>
+          </a>
+          <ma-button [button]="button" [viewMode]="viewMode"
+                     (innerClick)="processClick(button)"
+                     (delete)="deleteButton($event)" *ngFor="let button of formPanel.buttons"></ma-button>
+          <ng-template [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-template>
+          <button nz-button [nzType]="'dashed'" type="button" (click)="addButton()" title="添加按钮"><i nz-icon type="plus"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="ant-modal-footer ma-form-panel-buttons"  *ngIf="buttonsPlacement === 'footer'">
+      <ma-button [button]="button" [viewMode]="viewMode"
+                 [disabled]="button.triggerType ==='submit' && !formGroup.valid"
+                 (innerClick)="processClick(button)"
+                 (delete)="deleteButton($event)"
+                 *ngFor="let button of formPanel.buttons"></ma-button>
+      <ng-template [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-template>
+      <button nz-button [nzType]="'dashed'" type="button" (click)="addButton()" title="添加按钮"><i nz-icon type="plus"></i></button>
+    </div>
+  </form>
+
+  <div class="ant-modal ant-modal-confirm ma-form-panel-confirm-container" *ngIf="formType === 'confirm'">
+    <div class="ant-modal-content">
+      <div class="ant-modal-body">
+        <div class="ant-modal-confirm-body-wrapper">
+          <div class="ant-modal-confirm-body">
+            <i nz-icon type="question-circle"></i>
+            <div  class="ant-modal-confirm-title">
+              <ma-editable-text [(ngModel)]="formPanel.title" [ngModelOptions]="{standalone: true}" [viewMode]="viewMode"></ma-editable-text>
+            </div>
+            <div class="ant-modal-confirm-content"><b>&nbsp;</b></div>
+          </div>
+          <div class="ant-modal-confirm-btns ma-form-panel-buttons">
+            <ma-button [button]="button"
+                       [viewMode]="viewMode"
+                       (innerClick)="processClick(button)"
+                       (delete)="deleteButton($event)"
+                       *ngFor="let button of formPanel.buttons"></ma-button>
+            <ng-template [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-template>
+            <button nz-button [nzType]="'dashed'" type="button" (click)="addButton()" title="添加按钮"><i nz-icon type="plus"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+

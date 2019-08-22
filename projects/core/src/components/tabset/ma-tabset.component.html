@@ -1,0 +1,21 @@
+<nz-card *ngIf="component.children" [nzBordered]="false" [class.ma-tabset-designable]="viewMode == 1">
+  <nz-card-tab>
+    <ng-template #addTabTpl>
+      <i nz-icon type="plus" class="ma-tabset-icon-plus"  (click)="addTab()"></i>
+    </ng-template>
+    <nz-tabset nzSize="large" [(nzSelectedIndex)]="tabIndex" [nzTabBarExtraContent]="addTabTpl">
+      <nz-tab *ngFor="let tab of component.children; let i = index" [nzTitle]="title">
+        <ng-template #title>
+          <div class="ma-tabset-tab-title-container">
+            <ma-editable-text [(ngModel)]="tab.title" [viewMode]="viewMode"></ma-editable-text>
+            <i nz-icon type="eye" class="ma-tabset-icon ma-tabset-icon-eye" (click)="navigate(tab.viewPath)"></i>
+            <i nz-icon type="close" class="ma-tabset-icon ma-tabset-icon-close" (click)="removeTab(i)"></i>
+          </div>
+        </ng-template>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card-tab>
+  <div *ngFor="let tab of component.children; let i = index;" [class.hide]="tabIndex !== i">
+    <ma-dynamic [path]="formatPath(tab.viewPath)"></ma-dynamic>
+  </div>
+</nz-card>

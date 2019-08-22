@@ -1,0 +1,40 @@
+<nz-spin nzTip='正在引导启动...' [nzSpinning]="!initialized">
+  <nz-layout>
+    <nz-header class="ma-workspace-header">
+      <ma-header-content [toolbars]="headerToolbars" [showTopSearchBar]="showTopSearchBar"
+                         [showLanguageSwitcher]="showTopSearchBar" (toggleCollapsed)="toggleCollapsed($event)" *ngIf="initialized"></ma-header-content>
+    </nz-header>
+
+    <nz-layout class="ma-workspace-layout" [style.height.px]="contentHeight">
+
+      <nz-sider class="ma-workspace-sider" [(nzCollapsed)]="isCollapsed">
+        <ma-side-content [isCollapsed]="isCollapsed" *ngIf="initialized"></ma-side-content>
+      </nz-sider>
+
+      <nz-content class="ma-workspace-content">
+        <div class="ma-workspace-content-title">
+          <nz-breadcrumb>
+            <nz-breadcrumb-item *ngFor="let breadcrumb of breadcrumbs">
+              <a [routerLink]="breadcrumb.url">{{breadcrumb.label}}</a>
+            </nz-breadcrumb-item>
+          </nz-breadcrumb>
+        </div>
+
+        <div class="ma-workspace-content-body" *ngIf="initialized">
+          <ng-template #defaultContent>
+            <router-outlet></router-outlet>
+          </ng-template>
+          <ng-container [ngTemplateOutlet]="content || defaultContent"></ng-container>
+        </div>
+      </nz-content>
+
+    </nz-layout>
+
+    <nz-footer class="ma-workspace-footer" [class.hide]="viewMode === 0">
+      <button nz-button                       (click)="dispatchDesignEvent('revert')">还原<i nz-icon type="undo"></i></button>
+      <button nz-button  [nzType]="'primary'" (click)="dispatchDesignEvent('save')">保存<i nz-icon type="save"></i></button>
+      <button nz-button  [nzType]="'danger'"  (click)="dispatchDesignEvent('delete')">删除<i nz-icon type="delete"></i></button>
+    </nz-footer>
+  </nz-layout>
+
+</nz-spin>

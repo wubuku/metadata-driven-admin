@@ -1,0 +1,48 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "importHelpers": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "@metadata-driven-admin/demo": [
+        "dist/metadata-driven-admin/demo"
+      ],
+      "@metadata-driven-admin/demo/*": [
+        "dist/metadata-driven-admin/demo/*"
+      ],
+      "@metadata-driven-admin/core": [
+        "dist/metadata-driven-admin/core"
+      ],
+      "@metadata-driven-admin/core/*": [
+        "dist/metadata-driven-admin/core/*"
+      ],
+      "@metadata-driven-admin/in-memory-web-api": [
+        "dist/metadata-driven-admin/in-memory-web-api"
+      ],
+      "@metadata-driven-admin/in-memory-web-api/*": [
+        "dist/metadata-driven-admin/in-memory-web-api/*"
+      ],
+      "@metadata-driven-admin/authorization": [
+        "dist/metadata-driven-admin/authorization"
+      ],
+      "@metadata-driven-admin/authorization/*": [
+        "dist/metadata-driven-admin/authorization*"
+      ]
+    }
+  }
+}

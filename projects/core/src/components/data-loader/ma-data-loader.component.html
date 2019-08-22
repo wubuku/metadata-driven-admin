@@ -1,0 +1,7 @@
+<ma-form-panel [viewMode]="viewMode"
+               [formPanel]="dataLoader.formPanel"
+               [buttons]="dataLoaderButtons"
+               [buttonsPlacement]="'line-end'"
+               (setting)="openDataLoaderSetting()"
+               (submit)="load($event)"
+               *ngIf="dataLoader.formPanel"></ma-form-panel>

@@ -1,0 +1,18 @@
+<nz-autocomplete #auto [nzBackfill]="true" (selectionChange)="selectionChange($event)" >
+    <ng-container *ngIf="menusForSearch != null">
+        <nz-auto-optgroup *ngFor="let menu of menusForSearch" [nzLabel]="menu.displayName" >
+            <nz-auto-option *ngFor="let submenu of menu.children" [nzLabel]="submenu.displayName" [nzValue]="submenu.path" >
+                <div style="margin-left: 16px">{{submenu.displayName}}</div>
+            </nz-auto-option>
+        </nz-auto-optgroup>
+    </ng-container>
+</nz-autocomplete>
+<ng-template #searchIcon>
+    <i nz-icon type="search"></i>
+</ng-template>
+<nz-input-group [nzAddOnBefore]="searchIcon"
+                [class.input-group-focus]="focusSearch"
+                [class.input-group-blur]="!focusSearch">
+    <input nz-input [(ngModel)]="searchText" [nzAutocomplete]="auto" (ngModelChange)="searchMenus()"
+           [placeholder]="'header.search-placeholder' | translate" (focus)="focusSearch = true" (blur)="focusSearch = false" />
+</nz-input-group>

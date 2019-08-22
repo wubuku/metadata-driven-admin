@@ -1,0 +1,89 @@
+<ul class="ma-menus-table-buttons" >
+  <li><button nz-button nzType="danger" [nzLoading]="inBuilding" (click)="buildMenusFromRaml()">自动构建菜单</button></li>
+  <li style="width: 8px"></li>
+  <li><button nz-button [nzType]="'primary'" (click)="addMenu()">添加菜单组</button></li>
+</ul>
+<div class="ma-table-table-container">
+  <nz-table [nzData]="menus" [nzBordered]="false" [nzShowPagination]="false" [nzScroll]="{x: '100%'}">
+    <thead>
+    <tr >
+      <th nzShowExpand></th>
+      <th>图标</th>
+      <th>名字</th>
+      <th>描述</th>
+      <th>路由地址</th>
+      <th style="min-width: 350px;">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-template #trTemplate let-items="items" let-level="level" >
+      <ng-container *ngFor="let item of items; let i = index;" >
+        <tr>
+          <td [nzShowExpand]="item.children && item.children.length > 0" [(nzExpand)]="item.expand"></td>
+          <td [nzIndentSize]="level*30">
+            <ng-container *ngIf="!item.onEdit">
+              <i nz-icon style="width: 14px; height: 14px;" [type]="item.icon?.type" [iconfont]="item.icon?.iconfont" [theme]="item.icon?.theme"></i>
+            </ng-container>
+            <ng-container *ngIf="item.onEdit">
+              <button nz-button (click)="showIconModal(item)">
+                <i nz-icon style="width: 14px; height: 14px;" [type]="item.icon?.type" [iconfont]="item.icon?.iconfont" [theme]="item.icon?.theme"></i>
+              </button>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="!item.onEdit">
+              {{item.displayName}}
+            </ng-container>
+            <ng-container *ngIf="item.onEdit">
+              <input nz-input type="text" [(ngModel)]="item.displayName"/>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="!item.onEdit">
+              {{item.description}}
+            </ng-container>
+            <ng-container *ngIf="item.onEdit">
+              <input nz-input type="text" [(ngModel)]="item.description"/>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="!item.onEdit">
+              <a title="查看此视图" [routerLink]="item.path" >{{item.path}}</a>
+            </ng-container>
+            <ng-container *ngIf="item.onEdit">
+              <ma-data-picker [(ngModel)]="item.path" viewPath="/management/views" objectPath="path"></ma-data-picker>
+            </ng-container>
+          </td>
+          <td class="ma-table-row-buttons">
+            <ng-container *ngIf="item.onEdit">
+              <button nz-button [nzType]="'primary'" (click)="saveEdit(items, i)">保存</button>
+              <button nz-popconfirm nz-button nzType="danger" nzTitle="确认取消保存?" (nzOnConfirm)="cancelEdit(items, i)">取消</button>
+            </ng-container>
+            <ng-container *ngIf="!item.onEdit">
+              <nz-dropdown-menu #menu1="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item (click)="addMenu(item)">添加子菜单</li>
+                </ul>
+              </nz-dropdown-menu>
+              <nz-button-group>
+                <button nz-button (click)="startEdit(items, i)">修改</button>
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomCenter">
+                  <i nz-icon nzType="ellipsis"></i>
+                </button>
+              </nz-button-group>
+
+              <button nz-popconfirm nz-button nzType="danger" nzTitle="确认删除菜单组?" (nzOnConfirm)="doDelete(items, i)">删除</button>
+              <button nz-button [disabled]="i == 0"       (click)="up(items, i)"      >上移</button>
+              <button nz-button [disabled]="i == items.length"  (click)="down(items, i)"    >下移</button>
+            </ng-container>
+          </td>
+        </tr>
+        <ng-container *ngIf="item.expand">
+          <ng-container *ngTemplateOutlet="trTemplate;context:{items: item.children, level: level + 1}"></ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="trTemplate;context:{items: menus, level: 0}"></ng-container>
+    </tbody>
+  </nz-table>
+</div>

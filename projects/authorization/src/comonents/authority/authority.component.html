@@ -1,0 +1,38 @@
+<h4>后台接口：</h4>
+<div style="padding-left: 8px;">
+  <div *ngFor="let serverLevelNode of authorityNodes;">
+    <span class="ma-collapser" (click)="toggleCollapsed(serverLevelNode)"><i nz-icon [nzType]="serverLevelNode.collapsed ? 'caret-right' : 'caret-down' " nzTheme="outline"></i></span>
+    <label class="ma-checkbox">
+      <input type="checkbox" [(ngModel)]="serverLevelNode.checked" (ngModelChange)="emitCheckedChangeEvent(serverLevelNode)" /> {{serverLevelNode.value}}
+    </label>
+
+    <div [hidden]="serverLevelNode.collapsed">
+      <div *ngFor="let groupLevelNode of serverLevelNode.children; trackBy: trackByFn" class="ma-server-level">
+        <span class="ma-collapser" (click)="toggleCollapsed(groupLevelNode)"><i nz-icon [nzType]="serverLevelNode.collapsed ? 'caret-right' : 'caret-down' " nzTheme="outline"></i></span>
+        <label class="ma-checkbox">
+          <input type="checkbox" [(ngModel)]="groupLevelNode.checked" (ngModelChange)="emitCheckedChangeEvent(groupLevelNode)" /> {{groupLevelNode.value}}
+        </label>
+        <div class="ma-group-level" [hidden]="groupLevelNode.collapsed">
+          <label *ngFor="let authority of groupLevelNode.children; trackBy: trackByFn" class="ma-checkbox">
+            <input type="checkbox" [(ngModel)]="authority.checked" (ngModelChange)="emitCheckedChangeEvent(authority)" /> {{authority.value}}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<h4>菜单界面：</h4>
+<div style="padding-left: 8px;">
+  <div *ngFor="let menuNode of menuNodes;">
+    <span class="ma-collapser" (click)="toggleCollapsed(menuNode)"><i nz-icon [nzType]="menuNode.collapsed ? 'caret-right' : 'caret-down' " nzTheme="outline"></i></span>
+    <label class="ma-checkbox">
+      <input type="checkbox" [(ngModel)]="menuNode.checked" (ngModelChange)="emitCheckedChangeEvent(menuNode)" /> {{menuNode.label}}
+    </label>
+
+    <div class="ma-group-level" [hidden]="menuNode.collapsed">
+      <label *ngFor="let subMenu of menuNode.children; trackBy: trackByFn" class="ma-checkbox">
+        <input type="checkbox" [(ngModel)]="subMenu.checked" (ngModelChange)="emitCheckedChangeEvent(subMenu)" /> {{subMenu.label}}
+      </label>
+    </div>
+  </div>
+</div>
