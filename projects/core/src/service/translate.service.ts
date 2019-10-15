@@ -6,7 +6,12 @@ interface MessageSource {
   header: {
     'search-placeholder': string
   };
-
+  dataloader: {
+    'placeholder': string
+  };
+  button: {
+    select: string;
+  };
 }
 
 
@@ -14,7 +19,13 @@ const zh_CN: MessageSource = {
   operation: '操作',
   header: {
     'search-placeholder': '搜索: 菜单'
-  }
+  },
+  dataloader: {
+    placeholder: '请选择数据'
+  },
+  button: {
+    select: '选择'
+  },
 };
 
 
@@ -22,7 +33,13 @@ const en_US: MessageSource = {
   operation: 'Operation',
   header: {
     'search-placeholder': 'Search for menu'
-  }
+  },
+  dataloader: {
+    placeholder: 'Please select data'
+  },
+  button: {
+    select: 'Select'
+  },
 };
 
 

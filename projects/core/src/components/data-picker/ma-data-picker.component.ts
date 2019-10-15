@@ -1,8 +1,9 @@
-import {Component, EventEmitter, forwardRef, Input, Output} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Input, OnInit, Output} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {ModalService} from '../../wrapper/modal.service';
 import {ViewService} from '../../service/view.service';
 import {RouterService} from '../../wrapper/router.service';
+import {TranslateService} from '../../service/translate.service';
 
 @Component({
   selector: 'ma-data-picker',
@@ -21,9 +22,9 @@ import {RouterService} from '../../wrapper/router.service';
     multi: true
   }]
 })
-export class MaDataPickerComponent implements ControlValueAccessor {
+export class MaDataPickerComponent implements ControlValueAccessor , OnInit {
 
-  constructor(private modalService: ModalService, private viewService: ViewService, private router: RouterService) {
+  constructor(private modalService: ModalService, private viewService: ViewService, private router: RouterService, private translateService: TranslateService) {
 
   }
 
@@ -34,7 +35,7 @@ export class MaDataPickerComponent implements ControlValueAccessor {
 
 
   @Input()
-  placeholder = '请选择数据';
+  placeholder?: string;
 
   @Input()
   objectPath?: string;
@@ -44,6 +45,12 @@ export class MaDataPickerComponent implements ControlValueAccessor {
 
   @Output()
   select = new EventEmitter<any>();
+
+  ngOnInit(): void {
+    this.placeholder = this.translateService.translate('dataloader.placeholder');
+  }
+
+
 
   onChange = (value?: any) => {
 

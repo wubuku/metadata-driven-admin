@@ -75,7 +75,7 @@
         </ng-container>
         <td nzRight="0px" *ngIf="showRowButtons">
           <div class="ma-table-buttons-row">
-            <button nz-button nzType="primary" (click)="emit(data)" *ngIf="modalRef">选择</button>
+            <button nz-button nzType="primary" (click)="emit(data)" *ngIf="modalRef">{{'button.select' | translate}}</button>
             <ng-container *ngIf="!modalRef">
               <ma-button [button]="button" [viewMode]="viewMode"
                          (innerClick)="processClick(button, data)"
