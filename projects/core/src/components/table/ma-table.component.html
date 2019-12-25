@@ -9,7 +9,7 @@
   <div class="ma-table-buttons">
     <ma-button [button]="button" [viewMode]="viewMode"
                (innerClick)="processClick(button)"
-               (delete)="deleteButton($event)" *ngFor="let button of component.buttons"></ma-button>
+               (delete)="deleteButton(component.buttons, $event)" *ngFor="let button of component.buttons"></ma-button>
     <ng-container [ngTemplateOutlet]="buttons" *ngIf="buttons"></ng-container>
     <button nz-button class="adder" [nzType]="'dashed'" type="button" (click)="addButton(component.buttons)" title="添加按钮"><i nz-icon type="plus" ></i></button>
   </div>
@@ -79,7 +79,7 @@
             <ng-container *ngIf="!modalRef">
               <ma-button [button]="button" [viewMode]="viewMode"
                          (innerClick)="processClick(button, data)"
-                         (delete)="deleteButton($event)" *ngFor="let button of component.rowButtons"></ma-button>
+                         (delete)="deleteButton(component.rowButtons, $event)" *ngFor="let button of component.rowButtons"></ma-button>
 
               <ng-container *ngIf="rowButtons">
                 <ng-container [ngTemplateOutlet]="rowButtons" [ngTemplateOutletContext]="{ $implicit: data}"></ng-container>

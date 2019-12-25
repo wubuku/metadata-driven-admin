@@ -65,6 +65,7 @@ export class DesignService {
     this.toggle.emit(this.viewMode);
 
     if (this.viewMode === ViewMode.DESIGN) {
+      console.log(this.designComponent.component);
       this.messageService.info('进入编辑器模式');
     } else {
       this.messageService.info('退出编辑器模式');

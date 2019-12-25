@@ -213,9 +213,9 @@ export class MaTableComponent extends MaPageableBaseComponent<Table> implements 
     buttons.push(button);
   }
 
-  deleteButton(button: Button) {
-    const index = this.component.buttons.indexOf(button);
-    this.component.buttons.splice(index, 1);
+  deleteButton(buttons: Button[], button: Button) {
+    const index = buttons.indexOf(button);
+    buttons.splice(index, 1);
   }
 }
 
