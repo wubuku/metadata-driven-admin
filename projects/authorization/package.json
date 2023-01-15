@@ -6,6 +6,6 @@
     "@angular/core": "^7.0.0"
   },
   "publishConfig": {
-    "registry": "http://47.105.144.230:8081/repository/npm-snapshots/"
+    "registry": "http://my-nexus:8081/repository/npm-snapshots/"
   }
 }
